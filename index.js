@@ -31,9 +31,13 @@ client.on('message', msg => {
     
     msg.channel.send(embed);
 
-  }else if(msg.content.startsWith('?random ')){
+  }else if(msg.content.startsWith('?random')){
 
-      image(msg);
+    if(msg.content === '?random'){
+        msg.reply('necesitas poner un término de búsqueda.');
+    }else{
+        image(msg);
+    } 
 
   }else if(msg.content === '?javi'){
 
