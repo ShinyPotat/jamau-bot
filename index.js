@@ -12,7 +12,7 @@ cloudinary.config({
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const token = 'NzAyMDgxNzMxMzA5NzMxODYw.Xp7Vng.XtHJzT9uQP7i5hKSa5jguXWFc2I';
+const token = 'NzAyMDgxNzMxMzA5NzMxODYw.XqFG_Q.6X6YvLPEK8b6q-9aErLlrs1iJNg';
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -27,6 +27,8 @@ client.on('message', msg => {
         .addField('?javi', 'Foto random de ShinyPotat')
         .addField('?emilio', 'Foto random de Sully')
         .addField('?jj', 'Foto random de NeNu')
+        .addField('?bea', 'Foto random de rapature')
+        .addField('?pablo', 'Foto random de pablo baiteado')
         .addField('?random "búsqueda"', 'Muestra una foto random de búsqueda');
     
     msg.channel.send(embed);
@@ -60,6 +62,20 @@ client.on('message', msg => {
         .sort_by('public_id','desc')
         .execute().then(result => memeFotosRandom(msg,result));
 
+  }else if(msg.content === '?bea'){
+
+    const url = cloudinary.v2.search
+        .expression('folder:bea')
+        .sort_by('public_id','desc')
+        .execute().then(result => memeFotosRandom(msg,result));
+
+  }else if(msg.content === '?pablo'){
+
+    const url = cloudinary.v2.search
+        .expression('folder:pablo')
+        .sort_by('public_id','desc')
+        .execute().then(result => memeFotosRandom(msg,result));
+
   }
 
 });
@@ -76,9 +92,11 @@ function memeFotosRandom(msg,result){
 }
 
 function image(message){
+
+    const query = message.content.substring(8);
  
     var options = {
-        url: "http://results.dogpile.com/serp?qc=images&q=" + message.content.substring(8),
+        url: "http://results.dogpile.com/serp?qc=images&q=" + query,
         method: "GET",
         headers: {
             "Accept": "text/html",
@@ -105,14 +123,19 @@ function image(message){
             const embed = new Discord.MessageEmbed()
             .setTitle('Error:')
             .setColor('RED')
-            .setDescription('No hay ninguna foto para => ' + message.content.substring(8));
+            .setDescription('No hay ninguna foto para => ' + query);
             message.channel.send(embed);
             return;
         }
  
         // Send result
-        const image = new Discord.MessageAttachment(urls[Math.floor(Math.random() * urls.length)]);
-        message.channel.send(image);
+        const embed = new Discord.MessageEmbed()
+            .setTitle(query)
+            .setImage(urls[Math.floor(Math.random() * urls.length)])
+            .setColor('RANDOM')
+            .setFooter(message.author.username, message.author.avatarURL());
+
+        message.channel.send(embed);
     });
  
 }
