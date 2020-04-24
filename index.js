@@ -80,8 +80,7 @@ client.on('message', msg => {
         .execute().then(result => memeFotosRandom(msg,result));
 
   }else {
-      msg.reply('ese comando no existe.');
-      msg.channel.send(help);
+      msg.reply(`el comando ${msg.content} no existe.`);
   }
 
 });
