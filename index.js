@@ -80,7 +80,7 @@ client.on('message', msg => {
         .execute().then(result => memeFotosRandom(msg,result));
 
   }else {
-      msg.reply(`el comando ${msg.content} no existe.`);
+      msg.reply(`el comando \`${msg.content}\` no existe.`);
   }
 
 });
