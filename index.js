@@ -19,9 +19,8 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-  if (msg.content === '?help') {
 
-    const embed = new Discord.MessageEmbed()
+    const help = new Discord.MessageEmbed()
         .setColor('BLUE')
         .setTitle('Comandos:')
         .addField('?javi', 'Foto random de ShinyPotat')
@@ -30,8 +29,12 @@ client.on('message', msg => {
         .addField('?bea', 'Foto random de rapature')
         .addField('?pablo', 'Foto random de pablo baiteado')
         .addField('?random "búsqueda"', 'Muestra una foto random de búsqueda');
+
+  if(!msg.content.startsWith('?')) return;  
+
+  if (msg.content === '?help') {   
     
-    msg.channel.send(embed);
+    msg.channel.send(help);
 
   }else if(msg.content.startsWith('?random')){
 
@@ -76,6 +79,9 @@ client.on('message', msg => {
         .sort_by('public_id','desc')
         .execute().then(result => memeFotosRandom(msg,result));
 
+  }else {
+      msg.reply('ese comando no existe.');
+      msg.channel.send(help);
   }
 
 });
