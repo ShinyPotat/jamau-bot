@@ -30,58 +30,58 @@ client.on('message', msg => {
         .addField('?pablo', 'Foto random de pablo baiteado')
         .addField('?random "búsqueda"', 'Muestra una foto random de búsqueda');
 
-  if(!msg.content.startsWith('?')) return;  
+    if(!msg.content.startsWith('?')) return;  
 
-  if (msg.content === '?help') {   
-    
-    msg.channel.send(help);
+    if (msg.content === '?help') {   
+        
+        msg.channel.send(help);
 
-  }else if(msg.content.startsWith('?random')){
+    }else if(msg.content.startsWith('?random')){
 
-    if(msg.content === '?random'){
-        msg.reply('necesitas poner un término de búsqueda.');
-    }else{
-        image(msg);
-    } 
+        if(msg.content === '?random'){
+            msg.reply('necesitas poner un término de búsqueda.');
+        }else{
+            image(msg);
+        } 
 
-  }else if(msg.content === '?javi'){
+    }else if(msg.content === '?javi'){
 
-    const url = cloudinary.v2.search
-        .expression('folder:javi')
-        .sort_by('public_id','desc')
-        .execute().then(result => memeFotosRandom(msg,result));
+        const url = cloudinary.v2.search
+            .expression('folder:javi')
+            .sort_by('public_id','desc')
+            .execute().then(result => memeFotosRandom(msg,result));
 
-  }else if(msg.content === '?emilio'){
+    }else if(msg.content === '?emilio'){
 
-    const url = cloudinary.v2.search
-        .expression('folder:emilio')
-        .sort_by('public_id','desc')
-        .execute().then(result => memeFotosRandom(msg,result));
+        const url = cloudinary.v2.search
+            .expression('folder:emilio')
+            .sort_by('public_id','desc')
+            .execute().then(result => memeFotosRandom(msg,result));
 
-  }else if(msg.content === '?jj'){
+    }else if(msg.content === '?jj'){
 
-    const url = cloudinary.v2.search
-        .expression('folder:jj')
-        .sort_by('public_id','desc')
-        .execute().then(result => memeFotosRandom(msg,result));
+        const url = cloudinary.v2.search
+            .expression('folder:jj')
+            .sort_by('public_id','desc')
+            .execute().then(result => memeFotosRandom(msg,result));
 
-  }else if(msg.content === '?bea'){
+    }else if(msg.content === '?bea'){
 
-    const url = cloudinary.v2.search
-        .expression('folder:bea')
-        .sort_by('public_id','desc')
-        .execute().then(result => memeFotosRandom(msg,result));
+        const url = cloudinary.v2.search
+            .expression('folder:bea')
+            .sort_by('public_id','desc')
+            .execute().then(result => memeFotosRandom(msg,result));
 
-  }else if(msg.content === '?pablo'){
+    }else if(msg.content === '?pablo'){
 
-    const url = cloudinary.v2.search
-        .expression('folder:pablo')
-        .sort_by('public_id','desc')
-        .execute().then(result => memeFotosRandom(msg,result));
+        const url = cloudinary.v2.search
+            .expression('folder:pablo')
+            .sort_by('public_id','desc')
+            .execute().then(result => memeFotosRandom(msg,result));
 
-  }else {
-      msg.reply(`el comando \`${msg.content}\` no existe.`);
-  }
+    }else {
+        msg.channel.send(`\`${msg.content}\` no existe.`);
+    }
 
 });
 
@@ -126,9 +126,9 @@ function image(message){
  
         if (!urls.length) {
             const embed = new Discord.MessageEmbed()
-            .setTitle('Error:')
-            .setColor('RED')
-            .setDescription('No hay ninguna foto para => ' + query);
+                .setTitle('Error:')
+                .setColor('RED')
+                .setDescription('No hay ninguna foto para => ' + query);
             message.channel.send(embed);
             return;
         }
