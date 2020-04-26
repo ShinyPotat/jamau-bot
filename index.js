@@ -1,5 +1,6 @@
 const cheerio = require('cheerio');
 const request = require('request');
+const ytdl = require('ytdl-core');
 
 var cloudinary = require('cloudinary');
 CLOUDINARY_URL = 'cloudinary://265713471968882:mJ1ZaPjMVB58RAES1MoysccFJTo@djyfxiile';
@@ -18,7 +19,7 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('message', msg => {
+client.on('message', async msg => {
 
     const help = new Discord.MessageEmbed()
         .setColor('BLUE')
@@ -28,57 +29,86 @@ client.on('message', msg => {
         .addField('?jj', 'Foto random de NeNu')
         .addField('?bea', 'Foto random de rapature')
         .addField('?pablo', 'Foto random de pablo baiteado')
+        .addField('?beabkeys', 'Reproduce una cover al azar')
         .addField('?random "búsqueda"', 'Muestra una foto random de búsqueda');
 
     if(!msg.content.startsWith('?')) return;  
 
-    if (msg.content === '?help') {   
+    if (msg.content.toLowerCase === '?help') {   
         
         msg.channel.send(help);
 
-    }else if(msg.content.startsWith('?random')){
+    }else if(msg.content.toLowerCase.startsWith('?random')){
 
-        if(msg.content === '?random'){
+        if(msg.content.toLowerCase === '?random'){
             msg.reply('necesitas poner un término de búsqueda.');
         }else{
             image(msg);
         } 
 
-    }else if(msg.content === '?javi'){
+    }else if(msg.content.toLowerCase === '?javi'){
 
         const url = cloudinary.v2.search
             .expression('folder:javi')
             .sort_by('public_id','desc')
             .execute().then(result => memeFotosRandom(msg,result));
 
-    }else if(msg.content === '?emilio'){
+    }else if(msg.content.toLowerCase === '?emilio'){
 
         const url = cloudinary.v2.search
             .expression('folder:emilio')
             .sort_by('public_id','desc')
             .execute().then(result => memeFotosRandom(msg,result));
 
-    }else if(msg.content === '?jj'){
+    }else if(msg.content.toLowerCase === '?jj'){
 
         const url = cloudinary.v2.search
             .expression('folder:jj')
             .sort_by('public_id','desc')
             .execute().then(result => memeFotosRandom(msg,result));
 
-    }else if(msg.content === '?bea'){
+    }else if(msg.content.toLowerCase === '?bea'){
 
         const url = cloudinary.v2.search
             .expression('folder:bea')
             .sort_by('public_id','desc')
             .execute().then(result => memeFotosRandom(msg,result));
 
-    }else if(msg.content === '?pablo'){
+    }else if(msg.content.toLowerCase === '?pablo'){
 
         const url = cloudinary.v2.search
             .expression('folder:pablo')
             .sort_by('public_id','desc')
             .execute().then(result => memeFotosRandom(msg,result));
 
+    
+    } else if(msg.content.toLowerCase === '?beabkeys'){
+
+        if (msg.member.voice.channel) { 
+
+            const connection = await msg.member.voice.channel.join();
+
+            request('https://www.googleapis.com/youtube/v3/search?part=id&channelId=UCSJ-0mjl0PaNKq6vuvrXOPA&key=AIzaSyBk0WuP9CSJAN3U3hoYzFFVxf-zyZM45FA&type=video',
+                { json: true }, (err, res, body) => {
+                
+                if (err) { return console.log(err); }
+
+                console.log(body);
+
+                const url = "https://www.youtube.com/watch?v=" + body.items[Math.floor(Math.random() * body.pageInfo.resultsPerPage)].id.videoId;
+
+                console.log('La url del video es: ' + url);    
+             
+                connection.play(ytdl(url, { filter: 'audioonly' }));
+
+                msg.channel.send('Reproduciendo: ' + url);
+
+            });
+            
+        } else {
+            msg.reply('Necesitas estar en un canal de voz primero.');
+        }
+        
     }else {
         msg.channel.send(`\`${msg.content}\` no existe.`);
     }
