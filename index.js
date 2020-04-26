@@ -34,47 +34,47 @@ client.on('message', async msg => {
 
     if(!msg.content.startsWith('?')) return;  
 
-    if (msg.content.toLowerCase === '?help') {   
+    if (msg.content.toLowerCase() === '?help') {   
         
         msg.channel.send(help);
 
-    }else if(msg.content.toLowerCase.startsWith('?random')){
+    }else if(msg.content.toLowerCase().startsWith('?random')){
 
-        if(msg.content.toLowerCase === '?random'){
+        if(msg.content.toLowerCase() === '?random'){
             msg.reply('necesitas poner un término de búsqueda.');
         }else{
             image(msg);
         } 
 
-    }else if(msg.content.toLowerCase === '?javi'){
+    }else if(msg.content.toLowerCase() === '?javi'){
 
         const url = cloudinary.v2.search
             .expression('folder:javi')
             .sort_by('public_id','desc')
             .execute().then(result => memeFotosRandom(msg,result));
 
-    }else if(msg.content.toLowerCase === '?emilio'){
+    }else if(msg.content.toLowerCase() === '?emilio'){
 
         const url = cloudinary.v2.search
             .expression('folder:emilio')
             .sort_by('public_id','desc')
             .execute().then(result => memeFotosRandom(msg,result));
 
-    }else if(msg.content.toLowerCase === '?jj'){
+    }else if(msg.content.toLowerCase() === '?jj'){
 
         const url = cloudinary.v2.search
             .expression('folder:jj')
             .sort_by('public_id','desc')
             .execute().then(result => memeFotosRandom(msg,result));
 
-    }else if(msg.content.toLowerCase === '?bea'){
+    }else if(msg.content.toLowerCase() === '?bea'){
 
         const url = cloudinary.v2.search
             .expression('folder:bea')
             .sort_by('public_id','desc')
             .execute().then(result => memeFotosRandom(msg,result));
 
-    }else if(msg.content.toLowerCase === '?pablo'){
+    }else if(msg.content.toLowerCase() === '?pablo'){
 
         const url = cloudinary.v2.search
             .expression('folder:pablo')
@@ -82,7 +82,7 @@ client.on('message', async msg => {
             .execute().then(result => memeFotosRandom(msg,result));
 
     
-    } else if(msg.content.toLowerCase === '?beabkeys'){
+    } else if(msg.content.toLowerCase() === '?beabkeys'){
 
         if (msg.member.voice.channel) { 
 
@@ -106,7 +106,7 @@ client.on('message', async msg => {
             });
             
         } else {
-            msg.reply('Necesitas estar en un canal de voz primero.');
+            msg.reply('necesitas estar en un canal de voz primero.');
         }
         
     }else {
