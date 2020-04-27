@@ -147,6 +147,8 @@ client.on('message', async msg => {
 
                     connection.play(url);
 
+                    msg.delete();
+
             });
             
         } else {
