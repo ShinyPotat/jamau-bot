@@ -119,10 +119,13 @@ client.on('message', async msg => {
             .then(character => {
 
                 console.log(character);
+
+                var img_url = character.thumbnail.substring(0, character.thumbnail.length - 18) + "portrait_incredible.jpg";
+
                 msg.channel.send(new Discord.MessageEmbed()
                     .setTitle(character.name)
                     .setDescription(character.description)
-                    .setImage(character.thumbnail)
+                    .setImage(img_url)
                     .setColor('RED'));
                 
             })
