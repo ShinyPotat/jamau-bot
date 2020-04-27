@@ -138,12 +138,14 @@ client.on('message', async msg => {
 
             const connection = await msg.member.voice.channel.join();
 
-            cloudinary.v2.search
+            const urls = cloudinary.v2.search
                 .expression('folder:audios')
                 .sort_by('public_id','desc')
                 .execute().then(result => {
                     
                     const url = result.resources[Math.floor(Math.random() * result.total_count)].url;
+
+                    console.log(url);
 
                     connection.play(url);
 
