@@ -1,6 +1,7 @@
 const cheerio = require('cheerio');
 const request = require('request');
 const ytdl = require('ytdl-core');
+const marvel = require ('marvel-random-hero');
 
 var cloudinary = require('cloudinary');
 CLOUDINARY_URL = 'cloudinary://265713471968882:mJ1ZaPjMVB58RAES1MoysccFJTo@djyfxiile';
@@ -24,13 +25,14 @@ client.on('message', async msg => {
     const help = new Discord.MessageEmbed()
         .setColor('BLUE')
         .setTitle('Comandos:')
-        .addField('?javi', 'Foto random de ShinyPotat')
-        .addField('?emilio', 'Foto random de Sully')
-        .addField('?jj', 'Foto random de NeNu')
-        .addField('?bea', 'Foto random de rapature')
-        .addField('?pablo', 'Foto random de pablo baiteado')
-        .addField('?beabkeys', 'Reproduce una cover al azar')
-        .addField('?random "búsqueda"', 'Muestra una foto random de búsqueda');
+        .addField('\`?javi\`', 'Foto random de ShinyPotat')
+        .addField('\`?emilio\`', 'Foto random de Sully')
+        .addField('\`?jj\`', 'Foto random de NeNu')
+        .addField('\`?bea\`', 'Foto random de rapature')
+        .addField('\`?pablo\`', 'Foto random de pablo baiteado')
+        .addField('\`?beabkeys\`', 'Reproduce una cover al azar')
+        .addField('\`?random "búsqueda"\`', 'Muestra una foto random de búsqueda')
+        .addField('\`?marvel\`', 'Devuelve un personaje de marvel al azar');
 
     if(!msg.content.startsWith('?')) return;  
 
@@ -109,6 +111,23 @@ client.on('message', async msg => {
             msg.reply('necesitas estar en un canal de voz primero.');
         }
         
+    } else if(msg.content.toLowerCase() === '?marvel'){
+
+        const { randomCharacter } = marvel('e6f0777483ed93c72c1224aab371ec88', '56e220a5a7ccaa9dd3a33378cca08d51c980ef33');
+
+        randomCharacter()
+            .then(character => {
+
+                console.log(character);
+                msg.channel.send(new Discord.MessageEmbed()
+                    .setTitle(character.name)
+                    .setDescription(character.description)
+                    .setImage(character.thumbnail)
+                    .setColor('RED'));
+                
+            })
+            .catch(error => console.log(error));
+
     }else {
         msg.channel.send(`\`${msg.content}\` no existe.`);
     }

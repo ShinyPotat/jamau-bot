@@ -16,6 +16,7 @@
     "cloudinary": "^1.21.0",
     "discord.js": "^12.2.0",
     "ffmpeg-static": "^4.1.1",
+    "marvel-random-hero": "^1.1.1",
     "request": "^2.88.2",
     "ytdl-core": "^2.1.1"
   },
