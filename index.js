@@ -142,6 +142,8 @@ client.on('message', async msg => {
                 .expression('folder:audios')
                 .sort_by('public_id','desc')
                 .execute().then(result => {
+
+                    console.log(result);
                     
                     const url = result.resources[Math.floor(Math.random() * result.total_count)].url;
 
