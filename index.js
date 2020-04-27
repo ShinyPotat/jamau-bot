@@ -2,19 +2,18 @@ const cheerio = require('cheerio');
 const request = require('request');
 const ytdl = require('ytdl-core');
 const marvel = require ('marvel-random-hero');
+const config = require('config-yml');
 
 var cloudinary = require('cloudinary');
-CLOUDINARY_URL = 'cloudinary://265713471968882:mJ1ZaPjMVB58RAES1MoysccFJTo@djyfxiile';
+CLOUDINARY_URL = config.cloudinary.url;
 cloudinary.config({ 
-    cloud_name: 'djyfxiile', 
-    api_key: '265713471968882', 
-    api_secret: 'mJ1ZaPjMVB58RAES1MoysccFJTo' 
+    cloud_name: config.cloudinary.cloud_name, 
+    api_key: config.cloudinary.api_key, 
+    api_secret: config.cloudinary.api_secret 
 });
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
-
-const token = 'NzAyMDgxNzMxMzA5NzMxODYw.XqFG_Q.6X6YvLPEK8b6q-9aErLlrs1iJNg';
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -91,7 +90,7 @@ client.on('message', async msg => {
 
             const connection = await msg.member.voice.channel.join();
 
-            request('https://www.googleapis.com/youtube/v3/search?part=id&channelId=UCSJ-0mjl0PaNKq6vuvrXOPA&key=AIzaSyBk0WuP9CSJAN3U3hoYzFFVxf-zyZM45FA&type=video',
+            request('https://www.googleapis.com/youtube/v3/search?part=id&channelId=UCSJ-0mjl0PaNKq6vuvrXOPA&key='+config.youtube.key+'&type=video',
                 { json: true }, (err, res, body) => {
                 
                 if (err) { return console.log(err); }
@@ -114,7 +113,7 @@ client.on('message', async msg => {
         
     } else if(msg.content.toLowerCase() === '?marvel'){
 
-        const { randomCharacter } = marvel('e6f0777483ed93c72c1224aab371ec88', '56e220a5a7ccaa9dd3a33378cca08d51c980ef33');
+        const { randomCharacter } = marvel(config.marvel.public_key, config.marvel.private_key);
 
         randomCharacter()
             .then(character => {
@@ -165,7 +164,7 @@ client.on('message', async msg => {
 
 });
 
-client.login(token);
+client.login(config.discord.token);
 
 function memeFotosRandom(msg,result){
 

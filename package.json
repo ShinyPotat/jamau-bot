@@ -14,6 +14,7 @@
     "@discordjs/opus": "^0.2.1",
     "cheerio": "^1.0.0-rc.3",
     "cloudinary": "^1.21.0",
+    "config-yml": "^0.10.3",
     "discord.js": "^12.2.0",
     "ffmpeg-static": "^4.1.1",
     "marvel-random-hero": "^1.1.1",
