@@ -30,9 +30,10 @@ client.on('message', async msg => {
         .addField('\`?jj\`', 'Foto random de NeNu')
         .addField('\`?bea\`', 'Foto random de rapature')
         .addField('\`?pablo\`', 'Foto random de pablo baiteado')
-        .addField('\`?beabkeys\`', 'Reproduce una cover al azar')
+        .addField('\`?beabkeys\`', '🎵 Reproduce una cover al azar')
         .addField('\`?random "búsqueda"\`', 'Muestra una foto random de búsqueda')
-        .addField('\`?marvel\`', 'Devuelve un personaje de marvel al azar');
+        .addField('\`?marvel\`', 'Devuelve un personaje de marvel al azar')
+        .addField('\`?audio\`', 'Audio al azar para reirte un rato');
 
     if(!msg.content.startsWith('?')) return;  
 
@@ -130,6 +131,27 @@ client.on('message', async msg => {
                 
             })
             .catch(error => console.log(error));
+
+    }else if(msg.content.toLowerCase() === '?audio'){
+
+        if (msg.member.voice.channel) { 
+
+            const connection = await msg.member.voice.channel.join();
+
+            cloudinary.v2.search
+                .expression('folder:audios')
+                .sort_by('public_id','desc')
+                .execute().then(result => {
+                    
+                    const url = result.resources[Math.floor(Math.random() * result.total_count)].url;
+
+                    connection.play(url);
+
+            });
+            
+        } else {
+            msg.reply('necesitas estar en un canal de voz primero.');
+        }
 
     }else {
         msg.channel.send(`\`${msg.content}\` no existe.`);
