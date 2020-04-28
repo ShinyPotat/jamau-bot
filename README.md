@@ -15,3 +15,4 @@ API's usadas: cloudinary, youtube, discord, marvel.
 - `?random \"búsqueda\"` 'Muestra una foto random de búsqueda'
 - `?marvel` 'Devuelve un personaje de marvel al azar'
 - `?audio` 'Audio al azar para reirte un rato'
+- `?leave` 'Desconecta el bot del canal de audio'

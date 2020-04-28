@@ -32,7 +32,8 @@ client.on('message', async msg => {
         .addField('\`?beabkeys\`', '🎵 Reproduce una cover al azar')
         .addField('\`?random "búsqueda"\`', 'Muestra una foto random de búsqueda')
         .addField('\`?marvel\`', 'Devuelve un personaje de marvel al azar')
-        .addField('\`?audio\`', 'Audio al azar para reirte un rato');
+        .addField('\`?audio\`', 'Audio al azar para reirte un rato')
+        .addField('\`?leave\`', 'Desconecta el bot del canal de audio');
 
     if(!msg.content.startsWith('?')) return;  
 
@@ -156,6 +157,14 @@ client.on('message', async msg => {
             
         } else {
             msg.reply('necesitas estar en un canal de voz primero.');
+        }
+
+    }else if(msg.content.toLowerCase() === '?leave'){
+
+        if(client.voice){
+            msg.member.voice.channel.leave();
+        }else {
+            msg.reply('necesito estar en un canal de voz primero.');
         }
 
     }else {
