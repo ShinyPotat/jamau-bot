@@ -12,6 +12,8 @@ cloudinary.config({
     api_secret: config.cloudinary.api_secret 
 });
 
+var servers = {};
+
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
@@ -33,7 +35,8 @@ client.on('message', async msg => {
         .addField('\`?random "búsqueda"\`', 'Muestra una foto random de búsqueda')
         .addField('\`?marvel\`', 'Devuelve un personaje de marvel al azar')
         .addField('\`?audio\`', 'Audio al azar para reirte un rato')
-        .addField('\`?leave\`', 'Desconecta el bot del canal de audio');
+        .addField('\`?play \"link\"\`', 'Reproduce un video de YouTube')
+        .addField('\`?stop\`', 'Desconecta el bot del canal de audio');
 
     if(!msg.content.startsWith('?')) return;  
 
@@ -87,30 +90,33 @@ client.on('message', async msg => {
     
     } else if(msg.content.toLowerCase() === '?beabkeys'){
 
-        if (msg.member.voice.channel) { 
+        if(!msg.member.voice.channel){
+            msg.reply('necesitas estar en un canal de voz.');
+            return;
+        }
 
-            const connection = await msg.member.voice.channel.join();
+        if(!servers[msg.guild.id]) servers[msg.guild.id] = {
+            queue: []
+        }
 
-            request('https://www.googleapis.com/youtube/v3/search?part=id&channelId=UCSJ-0mjl0PaNKq6vuvrXOPA&key='+config.youtube.key+'&type=video',
+        var server = servers[msg.guild.id];
+
+        request('https://www.googleapis.com/youtube/v3/search?part=id&channelId=UCSJ-0mjl0PaNKq6vuvrXOPA&key='+config.youtube.key+'&type=video',
                 { json: true }, (err, res, body) => {
                 
                 if (err) { return console.log(err); }
 
-                console.log(body);
-
                 const url = "https://www.youtube.com/watch?v=" + body.items[Math.floor(Math.random() * body.pageInfo.resultsPerPage)].id.videoId;
 
-                console.log('La url del video es: ' + url);    
-             
-                connection.play(ytdl(url, { filter: 'audioonly' }));
+                server.queue.push(url);
 
-                msg.channel.send('Reproduciendo: ' + url);
+                console.log(server.queue);
+                msg.channel.send('Cover ' + url + ' añadida a la cola.');
 
-            });
-            
-        } else {
-            msg.reply('necesitas estar en un canal de voz primero.');
-        }
+                if(client.voice.connections.size==0) msg.member.voice.channel.join().then(function(connection){
+                    play(connection, msg, server);
+                });
+        });
         
     } else if(msg.content.toLowerCase() === '?marvel'){
 
@@ -132,40 +138,87 @@ client.on('message', async msg => {
             })
             .catch(error => console.log(error));
 
-    }else if(msg.content.toLowerCase() === '?audio'){
+    }else if(msg.content.toLowerCase() === '?audio'){ 
 
-        if (msg.member.voice.channel) { 
+        if(!msg.member.voice.channel){
+            msg.reply('necesitas estar en un canal de voz.');
+            return;
+        }
 
-            const connection = await msg.member.voice.channel.join();
+        if(!servers[msg.guild.id]) servers[msg.guild.id] = {
+            queue: []
+        }
 
-            const urls = cloudinary.v2.search
-                .expression('folder:audios')
-                .sort_by('public_id','desc')
-                .execute().then(result => {
+        var server = servers[msg.guild.id];
 
-                    console.log(result);
+        cloudinary.v2.search
+            .expression('folder:audios')
+            .sort_by('public_id','desc')
+            .execute().then(result => {
                     
-                    const url = result.resources[Math.floor(Math.random() * result.total_count)].url;
+                const url = result.resources[Math.floor(Math.random() * result.total_count)].url;
 
-                    console.log(url);
+                server.queue.push(url);
 
-                    connection.play(url);
+                console.log(server.queue);
+                msg.channel.send('Audio añadido a la cola.');
 
-                    msg.delete();
+                if(client.voice.connections.size==0) msg.member.voice.channel.join().then(function(connection){
+                    play(connection, msg, server);
+                });
 
             });
-            
-        } else {
-            msg.reply('necesitas estar en un canal de voz primero.');
+
+    }else if(msg.content.toLowerCase() === '?stop'){
+
+        var server = servers[msg.guild.id];
+        
+        if(msg.guild.voice.connection){
+            for(var i= server.queue.length -1; i >= 0; i--){
+                server.queue.splice(i, 1);
+            }
+
+            server.dispatcher.end();
+            msg.channel.send('Cola parada, desconectando del canal de voz...');
+            console.log('Cola parada');
         }
 
-    }else if(msg.content.toLowerCase() === '?leave'){
+        if(msg.guild.voice.connection) msg.guild.voice.connection.disconnect();
 
-        if(client.voice){
-            msg.member.voice.channel.leave();
-        }else {
-            msg.reply('necesito estar en un canal de voz primero.');
+    }else if(msg.content.toLowerCase().startsWith('?play')){
+
+        if(msg.content.toLowerCase() === '?play' || msg.content.toLowerCase() === '?play '){
+            msg.reply('necesitas poner un link.');
+            return;
         }
+
+        if(!msg.member.voice.channel){
+            msg.reply('necesitas estar en un canal de voz.');
+            return;
+        }
+
+        if(!servers[msg.guild.id]) servers[msg.guild.id] = {
+            queue: []
+        }
+
+        var server = servers[msg.guild.id];
+
+        server.queue.push(msg.content.split(" ")[1]);
+
+        console.log(server.queue);
+        msg.channel.send('Video añadido con éxito.');
+
+        if(client.voice.connections.size==0) msg.member.voice.channel.join().then(function(connection){
+            play(connection, msg, server);
+        });
+
+    }else if(msg.content.toLowerCase() === '?skip'){
+
+        var server = servers[msg.guild.id];
+
+        if(server.dispatcher) server.dispatcher.end();
+
+        msg.channel.send('Saltando canción...');
 
     }else {
         msg.channel.send(`\`${msg.content}\` no existe.`);
@@ -174,6 +227,27 @@ client.on('message', async msg => {
 });
 
 client.login(config.discord.token);
+
+async function play(connection, msg, server){
+    var server = servers[msg.guild.id];
+    
+    if(ytdl.validateURL(server.queue[0]))
+        server.dispatcher = connection.play(ytdl(server.queue[0], {filter: "audioonly"}));
+    else
+        server.dispatcher = connection.play(server.queue[0]);
+
+    server.queue.shift();
+
+    server.dispatcher.on('finish', function(){
+        if(server.queue[0]){
+            setTimeout(() => {
+                play(connection,msg);
+            }, 1500);
+        }else{
+            connection.disconnect();
+        }
+    });
+}
 
 function memeFotosRandom(msg,result){
 
